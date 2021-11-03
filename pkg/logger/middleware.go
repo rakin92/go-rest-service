@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rakin92/travel/pkg/consts"
+	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
 type logFields struct {

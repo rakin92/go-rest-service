@@ -5,7 +5,7 @@ import (
 	"github.com/markbates/goth/providers/facebook"
 	"github.com/markbates/goth/providers/google"
 	"github.com/markbates/goth/providers/twitter"
-	"github.com/rakin92/travel/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
 )
 
 // initalizeAuthProviders does just that, with Goth providers

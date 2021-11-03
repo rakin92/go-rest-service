@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/rakin92/travel/internal/orm"
-	"github.com/rakin92/travel/internal/server"
-	"github.com/rakin92/travel/pkg/cfg"
-	"github.com/rakin92/travel/pkg/env"
-	"github.com/rakin92/travel/pkg/logger"
+	"github.com/rakin92/go-rest-service/internal/orm"
+	"github.com/rakin92/go-rest-service/internal/server"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/env"
+	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
 // main

@@ -10,9 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 
-	"github.com/rakin92/travel/pkg/cfg"
-	"github.com/rakin92/travel/pkg/consts"
-	"github.com/rakin92/travel/pkg/env"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/consts"
+	"github.com/rakin92/go-rest-service/pkg/env"
 )
 
 var (

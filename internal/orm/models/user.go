@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/rakin92/travel/pkg/consts"
+	"github.com/rakin92/go-rest-service/pkg/consts"
 	"gorm.io/gorm"
 
 	"golang.org/x/crypto/bcrypt"

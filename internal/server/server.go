@@ -2,10 +2,10 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rakin92/travel/internal/orm"
-	"github.com/rakin92/travel/internal/server/routes"
-	"github.com/rakin92/travel/pkg/cfg"
-	"github.com/rakin92/travel/pkg/logger"
+	"github.com/rakin92/go-rest-service/internal/orm"
+	"github.com/rakin92/go-rest-service/internal/server/routes"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
 // registerRoutes register the routes for the server

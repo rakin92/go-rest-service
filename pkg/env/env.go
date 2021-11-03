@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/rakin92/travel/pkg/logger"
+	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
 // MustGet will return the env or panic if it is not present

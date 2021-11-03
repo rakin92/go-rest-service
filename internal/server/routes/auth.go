@@ -2,10 +2,10 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/rakin92/travel/internal/orm"
-	"github.com/rakin92/travel/internal/server/handlers"
-	"github.com/rakin92/travel/pkg/cfg"
-	"github.com/rakin92/travel/pkg/consts"
+	"github.com/rakin92/go-rest-service/internal/orm"
+	"github.com/rakin92/go-rest-service/internal/server/handlers"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
 // Auth routes

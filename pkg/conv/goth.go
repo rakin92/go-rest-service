@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/markbates/goth"
-	"github.com/rakin92/travel/internal/orm/models"
+	"github.com/rakin92/go-rest-service/internal/orm/models"
 )
 
 // GothUserToDBUser transforms [user] goth to db model

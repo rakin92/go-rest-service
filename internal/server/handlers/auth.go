@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
 
-	"github.com/rakin92/travel/internal/orm"
-	"github.com/rakin92/travel/pkg/cfg"
-	"github.com/rakin92/travel/pkg/consts"
-	"github.com/rakin92/travel/pkg/logger"
+	"github.com/rakin92/go-rest-service/internal/orm"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/consts"
+	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
 // Claims JWT claims

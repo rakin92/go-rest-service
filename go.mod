@@ -1,4 +1,4 @@
-module github.com/rakin92/travel
+module github.com/rakin92/go-rest-service
 
 go 1.17
 
