@@ -1,0 +1,4 @@
+CREATE TYPE ROLE_TYPE as ENUM (
+    'ADMIN',
+    'USER'
+);

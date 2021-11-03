@@ -1,15 +1,20 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Ignore vscode workspace config files
+.vscode
+.history
 
-# Test binary, built with `go test -c`
-*.test
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+# Never commit the ENV file
+.env
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# MacOS temp files
+**/.DS_Store
+**.log
+
+# build/ folder should be present, but the contents not, just .keep this one
+build/*
+!build/.keep
+
+# Ignore debug executable created by vscode
+__debug*
+
+tmp/*

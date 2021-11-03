@@ -1,0 +1,95 @@
+package handlers
+
+import (
+	"context"
+	"net/http"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+	"github.com/markbates/goth/gothic"
+
+	"github.com/rakin92/travel/internal/orm"
+	"github.com/rakin92/travel/pkg/cfg"
+	"github.com/rakin92/travel/pkg/consts"
+	"github.com/rakin92/travel/pkg/logger"
+)
+
+// Claims JWT claims
+type Claims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
+}
+
+// AuthProviders begin login with the auth provider
+func AuthProviders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// You have to add value context with provider name to get provider name in GetProviderName method
+		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
+		// try to get the user without re-authenticating
+		if gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request); err != nil {
+			gothic.BeginAuthHandler(c.Writer, c.Request)
+		} else {
+			logger.Debugf("user: %#v", gothUser)
+		}
+	}
+}
+
+// Callback callback to complete auth provider flow
+func Callback(sc *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// You have to add value context with provider name to get provider name in GetProviderName method
+		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
+		gothUsr, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		u, err := orm.FindUserByJWT(gothUsr.Email, gothUsr.Provider, gothUsr.UserID)
+		if err != nil {
+			if u, err = orm.UpsertUserProfile(&gothUsr); err != nil {
+				logger.Errorf(&err, "[Auth.CallBack.UserLoggedIn.FindUserByJWT.Error]: %s", err.Error())
+				c.AbortWithError(http.StatusInternalServerError, err)
+			}
+		}
+		jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod(sc.JWT.Algorithm), Claims{
+			Email: gothUsr.Email,
+			StandardClaims: jwt.StandardClaims{
+				Id:        gothUsr.UserID,
+				Issuer:    gothUsr.Provider,
+				IssuedAt:  time.Now().UTC().Unix(),
+				NotBefore: time.Now().UTC().Unix(),
+				ExpiresAt: gothUsr.ExpiresAt.UTC().Unix(),
+			},
+		})
+		token, err := jwtToken.SignedString([]byte(sc.JWT.Secret))
+		if err != nil {
+			logger.Errorf(&err, "[Auth.Callback.JWT] error: %s", err.Error())
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		json := gin.H{
+			"type":          "Bearer",
+			"token":         token,
+			"refresh_token": gothUsr.RefreshToken,
+			"user_id":       u.ID,
+		}
+		c.JSON(http.StatusOK, json)
+	}
+}
+
+// Logout logs out of the auth provider
+func Logout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
+		gothic.Logout(c.Writer, c.Request)
+		c.Writer.Header().Set("Location", "/")
+		c.Writer.WriteHeader(http.StatusTemporaryRedirect)
+	}
+}
+
+func addProviderToContext(c *gin.Context, value interface{}) *http.Request {
+	return c.Request.WithContext(context.WithValue(c.Request.Context(),
+		string(consts.ProjectContextKeys.GothicProviderCtxKey), value))
+}

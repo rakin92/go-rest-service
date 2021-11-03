@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  redis:
+    image: "redis:alpine"
+    command: redis-server --requirepass sOmE_sEcUrE_pAsS
+    ports:
+    - "6379:6379"
+    environment:
+    - REDIS_REPLICATION_MODE=master
+  postgres-db:
+    image: "postgres:alpine"
+    ports:
+    - "5432:5432"
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=sOmE_sEcUrE_pAsS
+    - POSTGRES_DB=localdb
+  dev:
+    build:
+      context: .
+      dockerfile: docker/dev.dockerfile
+    env_file:
+      - .env
+    ports:
+      - 7001:5000
+    depends_on:
+      - "postgres-db"
+  prod:
+    build:
+      context: .
+      dockerfile: docker/prod.dockerfile
+    env_file:
+      - .env
+    ports:
+      - 80:80
