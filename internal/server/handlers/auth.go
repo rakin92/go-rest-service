@@ -15,12 +15,6 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
-// Claims JWT claims
-type Claims struct {
-	Email string `json:"email"`
-	jwt.StandardClaims
-}
-
 // AuthProviders begin login with the auth provider
 func AuthProviders() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -54,17 +48,17 @@ func Callback(sc *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 				c.AbortWithError(http.StatusInternalServerError, err)
 			}
 		}
+		claims := &jwt.RegisteredClaims{
+			ID:        gothUsr.UserID,
+			Subject:   u.Email,
+			Issuer:    gothUsr.Provider,
+			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+			NotBefore: jwt.NewNumericDate(time.Now().UTC()),
+			ExpiresAt: jwt.NewNumericDate(gothUsr.ExpiresAt.UTC()),
+		}
+
 		// issue a new JWT token
-		jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod(sc.JWT.Algorithm), Claims{
-			Email: gothUsr.Email,
-			StandardClaims: jwt.StandardClaims{
-				Id:        gothUsr.UserID,
-				Issuer:    gothUsr.Provider,
-				IssuedAt:  time.Now().UTC().Unix(),
-				NotBefore: time.Now().UTC().Unix(),
-				ExpiresAt: gothUsr.ExpiresAt.UTC().Unix(),
-			},
-		})
+		jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod(sc.JWT.Algorithm), claims)
 		token, err := jwtToken.SignedString([]byte(sc.JWT.Secret))
 		if err != nil {
 			logger.Error(&err, "[Auth.Callback.JWT] error: %s", err.Error())
