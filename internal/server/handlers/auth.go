@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/markbates/goth/gothic"
 
 	"github.com/rakin92/go-rest-service/internal/orm"

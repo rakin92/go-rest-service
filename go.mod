@@ -3,7 +3,6 @@ module github.com/rakin92/go-rest-service
 go 1.17
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/gofrs/uuid v4.1.0+incompatible
