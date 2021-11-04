@@ -30,7 +30,7 @@ func AuthProviders() gin.HandlerFunc {
 		if gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request); err != nil {
 			gothic.BeginAuthHandler(c.Writer, c.Request)
 		} else {
-			logger.Debugf("user: %#v", gothUser)
+			logger.Debug("user: %#v", gothUser)
 		}
 	}
 }
@@ -46,13 +46,15 @@ func Callback(sc *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 			return
 		}
 
+		// finds the user in our system from goth jwt
 		u, err := orm.FindUserByJWT(gothUsr.Email, gothUsr.Provider, gothUsr.UserID)
 		if err != nil {
 			if u, err = orm.UpsertUserProfile(&gothUsr); err != nil {
-				logger.Errorf(&err, "[Auth.CallBack.UserLoggedIn.FindUserByJWT.Error]: %s", err.Error())
+				logger.Error(&err, "[Auth.CallBack.UserLoggedIn.FindUserByJWT.Error]: %s", err.Error())
 				c.AbortWithError(http.StatusInternalServerError, err)
 			}
 		}
+		// issue a new JWT token
 		jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod(sc.JWT.Algorithm), Claims{
 			Email: gothUsr.Email,
 			StandardClaims: jwt.StandardClaims{
@@ -65,7 +67,7 @@ func Callback(sc *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 		})
 		token, err := jwtToken.SignedString([]byte(sc.JWT.Secret))
 		if err != nil {
-			logger.Errorf(&err, "[Auth.Callback.JWT] error: %s", err.Error())
+			logger.Error(&err, "[Auth.Callback.JWT] error: %s", err.Error())
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
@@ -89,6 +91,7 @@ func Logout() gin.HandlerFunc {
 	}
 }
 
+// addProviderToContext adds our auth providers to context
 func addProviderToContext(c *gin.Context, value interface{}) *http.Request {
 	return c.Request.WithContext(context.WithValue(c.Request.Context(),
 		string(consts.ProjectContextKeys.GothicProviderCtxKey), value))

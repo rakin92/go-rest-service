@@ -15,17 +15,18 @@ func init() {
 	logger = NewLogger()
 }
 
-// StandardLogger enforces specific log message formats
+// Logger enforces specific log message formats
 type Logger struct {
 	*zerolog.Logger
 }
 
 // NewLogger initializes the standard logger
 func NewLogger() *Logger {
-	var baseLogger = zerolog.New(os.Stdout).With().Timestamp().Logger()
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+
+	var baseLogger = zerolog.New(os.Stdout).With().Timestamp().Stack().Logger()
 
 	return &Logger{&baseLogger}
 }
@@ -45,114 +46,74 @@ var (
 
 // Expose some log functions:
 
-// Debug Log
-func Debug(message string) {
-	logger.Debug().Msg(message)
-}
-
-// Debugf Log
-func Debugf(message string, args ...interface{}) {
-	logger.Debug().Msgf(message, args...)
-}
-
 // Errorfn Log errors of a [fn] with format
 func Errorfn(fn string, err error) error {
 	outerr := fmt.Errorf("[%s]: %v", fn, err)
-	logger.Error().Stack().Err(outerr).Msg(outerr.Error())
+	logger.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
 // InvalidArg is a standard error message
 func InvalidArg(argumentName string) error {
 	outerr := fmt.Errorf(invalidArgMessage.message, argumentName)
-	logger.Error().Stack().Err(outerr).Msg(outerr.Error())
+	logger.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
 // InvalidArgValue is a standard error message
 func InvalidArgValue(argumentName string, argumentValue string) error {
 	outerr := fmt.Errorf(invalidArgValueMessage.message, argumentName, argumentValue)
-	logger.Error().Stack().Err(outerr).Msg(outerr.Error())
+	logger.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
 // MissingArg is a standard error message
 func MissingArg(argumentName string) error {
 	outerr := fmt.Errorf(missingArgMessage.message, argumentName)
-	log.Error().Stack().Err(outerr).Msg(outerr.Error())
+	log.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
-// Info Log
-func Info(message string) {
-	logger.Info().Msg(message)
+// Debug logs a new message with debug level.
+func Debug(message string, args ...interface{}) {
+	logger.Debug().Msgf(message, args...)
 }
 
-// Infof Log
-func Infof(message string, args ...interface{}) {
+// Info logs a new message with info level.
+func Info(message string, args ...interface{}) {
 	logger.Info().Msgf(message, args...)
 }
 
-// Warn Log
-func Warn(message string) {
-	logger.Warn().Msg(message)
-}
-
-// Warnf Log
-func Warnf(message string, args ...interface{}) {
+// Warn logs a new message with warn level.
+func Warn(message string, args ...interface{}) {
 	logger.Warn().Msgf(message, args...)
 }
 
-// Panic Log
-func Panic(err *error, message string) {
+// Error logs a new message with error level.
+func Error(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Panic().Stack().Err(*err).Msg(message)
+		logger.Error().Err(*err).Msgf(message, args)
 	} else {
-		logger.Panic().Stack().Msg(message)
+		logger.Error().Msgf(message, args)
 	}
 }
 
-// Panicf Log
-func Panicf(err *error, message string, args ...interface{}) {
+// Fatal logs a new message with fatal level. The os.Exit(1) function
+// is called which terminates the program immediately.
+func Fatal(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Panic().Stack().Err(*err).Msgf(message, args)
+		logger.Fatal().Err(*err).Msgf(message, args)
 	} else {
-		logger.Panic().Stack().Msgf(message, args)
+		logger.Fatal().Msgf(message, args)
 	}
 }
 
-// Error Log
-func Error(err *error, message string) {
+// Panic logs a new message with panic level. The panic() function
+// is called by the Msg method, which stops the ordinary flow of a goroutine.
+func Panic(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Error().Stack().Err(*err).Msg(message)
+		logger.Panic().Err(*err).Msgf(message, args)
 	} else {
-		logger.Error().Stack().Msg(message)
-	}
-}
-
-// Errorf Log
-func Errorf(err *error, message string, args ...interface{}) {
-	if err != nil {
-		logger.Error().Stack().Err(*err).Msgf(message, args)
-	} else {
-		logger.Error().Stack().Msgf(message, args)
-	}
-}
-
-// Fatal Log
-func Fatal(err *error, message string) {
-	if err != nil {
-		logger.Fatal().Stack().Err(*err).Msg(message)
-	} else {
-		logger.Fatal().Stack().Msg(message)
-	}
-}
-
-// Fatalf Log
-func Fatalf(err *error, message string, args ...interface{}) {
-	if err != nil {
-		logger.Fatal().Stack().Err(*err).Msgf(message, args)
-	} else {
-		logger.Fatal().Stack().Msgf(message, args)
+		logger.Panic().Msgf(message, args)
 	}
 }

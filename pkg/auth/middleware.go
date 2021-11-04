@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/rakin92/go-rest-service/internal/orm"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"github.com/rakin92/go-rest-service/pkg/logger"
@@ -20,8 +20,9 @@ func authError(c *gin.Context, err error) {
 
 // Middleware wraps the request with auth middleware
 func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
-	logger.Infof("[Auth.Middleware] Applied to path: %s", path)
+	logger.Info("[Auth.Middleware] Applied to path: %s", path)
 	return gin.HandlerFunc(func(c *gin.Context) {
+		// Check and authenticate with api key
 		if a, err := ParseAPIKey(c, cfg); err == nil {
 			user, err := orm.FindUserByAPIKey(a)
 			if err != nil {
@@ -29,13 +30,14 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 			}
 			if user != nil {
 				c.Request = addUserIdToContext(c, user.ID)
-				logger.Debugf("User authenticated via api: %s", user.ID)
+				logger.Debug("User authenticated via api: %s", user.ID)
 			}
 			c.Next()
 		} else {
 			if err != ErrEmptyAPIKeyHeader {
 				authError(c, err)
 			} else {
+				// Authenticate via JWT Token
 				t, err := ParseToken(c, cfg)
 				if err != nil {
 					authError(c, err)
@@ -47,18 +49,18 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 							email := claims["email"].(string)
 							if claims["aud"] != nil {
 								audiences := claims["aud"]
-								logger.Warnf("\n\naudiences: %s\n\n", audiences)
+								logger.Warn("\n\naudiences: %s\n\n", audiences)
 							}
 							if claims["alg"] != nil {
 								algo := claims["alg"].(string)
-								logger.Warnf("\n\nalgo: %s\n\n", algo)
+								logger.Warn("\n\nalgo: %s\n\n", algo)
 							}
 							if user, err := orm.FindUserByJWT(email, issuer, userid); err != nil {
 								authError(c, ErrForbidden)
 							} else {
 								if user != nil {
 									c.Request = addUserIdToContext(c, user.ID)
-									logger.Debugf("User: %s", user.ID)
+									logger.Debug("User: %s", user.ID)
 								}
 								c.Next()
 							}

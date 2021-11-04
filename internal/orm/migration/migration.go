@@ -5,7 +5,10 @@ import (
 
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/golang-migrate/migrate/v4"
+
+	// postgres required for golang-migrate db dialact
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	// file required for golang-migrate file system
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"gorm.io/gorm"
 
@@ -15,6 +18,7 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
+// updateMigration updates our orm models schemas
 func updateMigration(db *gorm.DB) (err error) {
 	return db.AutoMigrate(
 		&models.Role{},
@@ -53,7 +57,7 @@ func ServiceAutoMigration(db *gorm.DB) error {
 	return m.Migrate()
 }
 
-// MigrateScripts runs scripts in scripts folder
+// MigrateScripts runs the migrations scripts in scripts folder
 func MigrateScripts(c *cfg.DB) error {
 	logger.Info("[Migration.Scripts] Running DB Migration Scripts")
 	mg, err := migrate.New("file://internal/orm/migration/scripts/", c.DSN)

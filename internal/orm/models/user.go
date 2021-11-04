@@ -15,7 +15,7 @@ import (
 
 // ## Entity definitions
 
-// User defines a user for the app
+// User defines a user for the service
 type User struct {
 	BaseModelSoftDelete        // We don't to actually delete the users, audit
 	Email               string `gorm:"not null;unique;index"`

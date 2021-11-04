@@ -8,7 +8,7 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
-// Auth routes
+// Auth routes to support OAuth for auth providers
 func Auth(sc *cfg.Server, r *gin.Engine, orm *orm.ORM) error {
 	provider := string(consts.ProjectContextKeys.ProviderCtxKey)
 	// OAuth handlers

@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Ping is simple keep-alive/ping handler
+// Health is simple keep-alive/ping handler
 func Health() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")

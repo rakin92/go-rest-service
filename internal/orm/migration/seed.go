@@ -11,12 +11,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// rollback is an helper function to rollback for gorm
 func rollback(tx *gorm.DB) {
 	if r := recover(); r != nil {
 		tx.Rollback()
 	}
 }
 
+// initializes our sample seed data
 var (
 	fname = "Test"
 	lname = "User"
@@ -67,7 +69,7 @@ var SeedUsers *gormigrate.Migration = &gormigrate.Migration{
 	},
 }
 
-// SeedRBAC inserts the first users
+// SeedRBAC inserts the first role-based access control
 var SeedRBAC *gormigrate.Migration = &gormigrate.Migration{
 	ID: "SEED_RBAC",
 	Migrate: func(db *gorm.DB) error {
@@ -92,7 +94,7 @@ var SeedRBAC *gormigrate.Migration = &gormigrate.Migration{
 					Description: consts.FormatPermissionDesc(p.(string), t.(string)),
 				}
 				if err := tx.Create(&permission).First(&permission).Error; err != nil {
-					logger.Errorf(&err, "[Migration.Jobs.SeedRBAC.permissions] error: %s", err.Error())
+					logger.Error(&err, "[Migration.Jobs.SeedRBAC.permissions] error: %s", err.Error())
 					return err
 				}
 				padmin = append(padmin, permission)
@@ -105,7 +107,7 @@ var SeedRBAC *gormigrate.Migration = &gormigrate.Migration{
 				Description: r.Description,
 			}
 			if err := tx.Create(role).First(&role).Error; err != nil {
-				logger.Errorf(&err, "[Migration.Jobs.SeedRBAC.roles] error: %s", err.Error())
+				logger.Error(&err, "[Migration.Jobs.SeedRBAC.roles] error: %s", err.Error())
 				return err
 			}
 			switch r.Name {

@@ -8,6 +8,7 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
+// logFields is used to structure of our request log data
 type logFields struct {
 	SerName    string
 	Path       string
@@ -19,10 +20,12 @@ type logFields struct {
 	User       string
 }
 
+// ErrorLogger is a handler function for any gin error type
 func ErrorLogger() gin.HandlerFunc {
 	return ErrorLoggerT(gin.ErrorTypeAny)
 }
 
+// ErrorLoggerT is a handler function for any gin error type
 func ErrorLoggerT(typ gin.ErrorType) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
@@ -36,6 +39,8 @@ func ErrorLoggerT(typ gin.ErrorType) gin.HandlerFunc {
 	}
 }
 
+// Middleware to log our gin requests in formatted JSON.
+// Can be added to be used by our Gin router.
 func Middleware(serName string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t := time.Now()
@@ -68,6 +73,7 @@ func Middleware(serName string) gin.HandlerFunc {
 	}
 }
 
+// logSwitch logs different levels of logs based on status code
 func logSwitch(lf *logFields) {
 	// TODO - look into using log with fields
 	switch {

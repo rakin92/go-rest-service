@@ -67,7 +67,7 @@ var (
 		MySQL:       "mysql",
 	}
 
-	// Roles that are part of the systme
+	// Roles that are part of the system
 	Roles = []role{
 		{
 			Name:        "admin",

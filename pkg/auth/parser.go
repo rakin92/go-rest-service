@@ -122,6 +122,7 @@ func tokenFromParam(c *gin.Context, key string) (string, error) {
 }
 
 // ParseToken parse jwt token from gin context
+// looks for token in header, query params, cookie
 func ParseToken(c *gin.Context, sc *cfg.Server) (t *jwt.Token, err error) {
 	var token string
 	methods := strings.Split(TokenLookup, ",")
@@ -159,6 +160,7 @@ func ParseToken(c *gin.Context, sc *cfg.Server) (t *jwt.Token, err error) {
 }
 
 // ParseAPIKey parse api key from gin context
+// looks for x-api-key in header, query params, cookie
 func ParseAPIKey(c *gin.Context, sc *cfg.Server) (apiKey string, err error) {
 	methods := strings.Split(APIKeyLookup, ",")
 	for _, method := range methods {

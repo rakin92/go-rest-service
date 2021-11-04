@@ -1,3 +1,4 @@
+// Service command main package lets us start out service
 package main
 
 import (
@@ -8,8 +9,11 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
-// main
+// main function starts our service by initializing our server configuration
+// running on db migrations and establashing connection to db
+// starts our server with gin
 func main() {
+	// Initializes our server config loading environment variables
 	var conf = &cfg.Server{
 		ServiceName:    env.MustGet("SERVICE_NAME"),
 		Version:        env.MustGet("APP_VERSION"),
@@ -48,10 +52,13 @@ func main() {
 			},
 		},
 	}
-	db, err := orm.Factory(&conf.Database)
+
+	// Initialize our database orm
+	o, err := orm.Factory(&conf.Database)
 	if err != nil {
-		logger.Panicf(&err, "[ORM]: Failed to connect to database: %s", err.Error())
+		logger.Panic(&err, "[ORM]: Failed to connect to database: %s", err.Error())
 	}
 
-	server.Run(conf, db)
+	// Runs the gin service
+	server.Run(conf, o)
 }

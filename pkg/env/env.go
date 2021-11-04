@@ -13,7 +13,7 @@ func MustGet(k string) string {
 	v := os.Getenv(k)
 	if v == "" {
 		logger.MissingArg(k)
-		logger.Panicf(nil, "ENV missing, key: "+k)
+		logger.Panic(nil, "ENV missing, key: "+k)
 	}
 	return v
 }
@@ -23,12 +23,12 @@ func MustGetBool(k string) bool {
 	v := os.Getenv(k)
 	if v == "" {
 		logger.MissingArg(k)
-		logger.Panicf(nil, "ENV missing, key: %s", k)
+		logger.Panic(nil, "ENV missing, key: %s", k)
 	}
 	b, err := strconv.ParseBool(v)
 	if err != nil {
 		logger.MissingArg(k)
-		logger.Panicf(&err, "ENV err: [%s]", err.Error())
+		logger.Panic(&err, "ENV err: [%s]", err.Error())
 	}
 	return b
 }
@@ -38,12 +38,12 @@ func MustGetInt32(k string) int {
 	v := os.Getenv(k)
 	if v == "" {
 		logger.MissingArg(k)
-		logger.Panicf(nil, "ENV missing, key: %s", k)
+		logger.Panic(nil, "ENV missing, key: %s", k)
 	}
 	i, err := strconv.ParseInt(v, 10, 32)
 	if err != nil {
 		logger.MissingArg(k)
-		logger.Panicf(&err, "ENV err: [%s]", err.Error())
+		logger.Panic(&err, "ENV err: [%s]", err.Error())
 	}
 	return int(i)
 }
@@ -53,12 +53,12 @@ func MustGetInt64(k string) int64 {
 	v := os.Getenv(k)
 	if v == "" {
 		logger.MissingArg(k)
-		logger.Panicf(nil, "ENV missing, key: %s", k)
+		logger.Panic(nil, "ENV missing, key: %s", k)
 	}
 	i, err := strconv.ParseInt(v, 10, 64)
 	if err != nil {
 		logger.MissingArg(k)
-		logger.Panicf(&err, "ENV err: [%s]"+err.Error())
+		logger.Panic(&err, "ENV err: [%s]"+err.Error())
 	}
 	return i
 }

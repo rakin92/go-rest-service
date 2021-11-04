@@ -8,8 +8,8 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 )
 
-// initalizeAuthProviders does just that, with Goth providers
-func initalizeAuthProviders(sc *cfg.Server) error {
+// initializeAuthProviders does just that, with Goth providers
+func initializeAuthProviders(sc *cfg.Server) error {
 	providers := []goth.Provider{}
 	// Initialize Goth providers
 	for _, p := range sc.AuthProviders {

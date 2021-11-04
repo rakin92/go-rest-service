@@ -28,24 +28,26 @@ type ORM struct {
 }
 
 // Factory creates a db connection with the selected dialect and connection
-// string
+// along with running all the db migrations
 func Factory(c *cfg.DB) (*ORM, error) {
 	db, err := gorm.Open(postgres.Open(c.DSN))
 	if err != nil {
-		logger.Panicf(&err, "[ORM] err: %s", err.Error())
+		logger.Panic(&err, "[ORM] err: %s", err.Error())
 	}
 	orm := &ORM{DB: db}
 	// Log every SQL command on dev, @prod: this should be disabled? Maybe.
-	// db.LogMode(c.LogMode) TODO - look into rhis
+	// db.LogMode(c.LogMode) TODO - look into this
 	// Automigrate tables
 	if c.AutoMigrate {
+		// migrates our sql scripts
 		err = migration.MigrateScripts(c)
 		if err != nil {
-			logger.Fatalf(&err, "[ORM.autoMigrate] scripts err: %s", err.Error())
+			logger.Fatal(&err, "[ORM.autoMigrate] scripts err: %s", err.Error())
 		}
+		// migrats our orm schema
 		err = migration.ServiceAutoMigration(orm.DB)
 		if err != nil {
-			logger.Fatalf(&err, "[ORM.autoMigrate] err: %v", err.Error())
+			logger.Fatal(&err, "[ORM.autoMigrate] err: %v", err.Error())
 		}
 	}
 
@@ -85,6 +87,7 @@ func (o *ORM) FindUserByJWT(email string, provider string, userID string) (*mode
 }
 
 // UpsertUserProfile saves the user if doesn't exists and adds the OAuth profile
+// and updates existing user info if record exist in db
 func (o *ORM) UpsertUserProfile(gu *goth.User) (*models.User, error) {
 	db := o.DB
 	up := &models.UserProfile{}

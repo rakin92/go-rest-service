@@ -21,8 +21,13 @@ func registerRoutes(sc *cfg.Server, r *gin.Engine, orm *orm.ORM) (err error) {
 		return err
 	}
 
-	// API routes
-	if err = routes.API(sc, r, orm); err != nil {
+	// Authenticated API routes
+	if err = routes.AuthAPI(sc, r, orm); err != nil {
+		return err
+	}
+
+	// Open API routes
+	if err = routes.OpenAPI(sc, r, orm); err != nil {
 		return err
 	}
 
@@ -37,17 +42,17 @@ func Run(sc *cfg.Server, orm *orm.ORM) {
 	r.Use(logger.Middleware(sc.ServiceName))
 
 	// Initialize the Auth providers
-	initalizeAuthProviders(sc)
+	initializeAuthProviders(sc)
 
 	// Routes and Handlers
 	registerRoutes(sc, r, orm)
 
 	// Inform the user where the server is listening
-	logger.Infof("Running %s @ %s", sc.ServiceName, sc.SchemaVersionedEndpoint(""))
+	logger.Info("Running %s @ %s", sc.ServiceName, sc.SchemaVersionedEndpoint(""))
 
 	// Run the server
 	// Print out and exit(1) to the OS if the server cannot run
 	if err := r.Run(sc.ListenEndpoint()); err != nil {
-		logger.Fatalf(&err, "Failed to start service %s", sc.ServiceName)
+		logger.Fatal(&err, "Failed to start service %s", sc.ServiceName)
 	}
 }
