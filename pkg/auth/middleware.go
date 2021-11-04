@@ -43,10 +43,11 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 					authError(c, err)
 				} else {
 					if claims, ok := t.Claims.(jwt.MapClaims); ok {
+						logger.Info("%+v", claims)
 						if claims["exp"] != nil {
 							issuer := claims["iss"].(string)
 							userid := claims["jti"].(string)
-							email := claims["email"].(string)
+							email := claims["sub"].(string)
 							if claims["aud"] != nil {
 								audiences := claims["aud"]
 								logger.Warn("\n\naudiences: %s\n\n", audiences)
