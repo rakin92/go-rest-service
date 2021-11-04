@@ -71,6 +71,9 @@ func (s *Server) ListenEndpoint() string {
 
 // VersionedEndpoint builds the endpoint `string (host + port + version)
 func (s *Server) VersionedEndpoint(path string) string {
+	if s.ServiceVersion == "" {
+		return "/v1" + path
+	}
 	return "/" + s.ServiceVersion + path
 }
 

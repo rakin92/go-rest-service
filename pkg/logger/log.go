@@ -53,21 +53,21 @@ func Errorfn(fn string, err error) error {
 	return outerr
 }
 
-// InvalidArg is a standard error message
+// InvalidArg is a standard error message for invalid argument
 func InvalidArg(argumentName string) error {
 	outerr := fmt.Errorf(invalidArgMessage.message, argumentName)
 	logger.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
-// InvalidArgValue is a standard error message
+// InvalidArgValue is a standard error message for missing argument value
 func InvalidArgValue(argumentName string, argumentValue string) error {
 	outerr := fmt.Errorf(invalidArgValueMessage.message, argumentName, argumentValue)
 	logger.Error().Err(outerr).Msg(outerr.Error())
 	return outerr
 }
 
-// MissingArg is a standard error message
+// MissingArg is a standard error message for missing arguments
 func MissingArg(argumentName string) error {
 	outerr := fmt.Errorf(missingArgMessage.message, argumentName)
 	log.Error().Err(outerr).Msg(outerr.Error())
@@ -92,9 +92,9 @@ func Warn(message string, args ...interface{}) {
 // Error logs a new message with error level.
 func Error(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Error().Err(*err).Msgf(message, args)
+		logger.Error().Err(*err).Msgf(message, args...)
 	} else {
-		logger.Error().Msgf(message, args)
+		logger.Error().Msgf(message, args...)
 	}
 }
 
@@ -102,9 +102,9 @@ func Error(err *error, message string, args ...interface{}) {
 // is called which terminates the program immediately.
 func Fatal(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Fatal().Err(*err).Msgf(message, args)
+		logger.Fatal().Err(*err).Msgf(message, args...)
 	} else {
-		logger.Fatal().Msgf(message, args)
+		logger.Fatal().Msgf(message, args...)
 	}
 }
 
@@ -112,8 +112,8 @@ func Fatal(err *error, message string, args ...interface{}) {
 // is called by the Msg method, which stops the ordinary flow of a goroutine.
 func Panic(err *error, message string, args ...interface{}) {
 	if err != nil {
-		logger.Panic().Err(*err).Msgf(message, args)
+		logger.Panic().Err(*err).Msgf(message, args...)
 	} else {
-		logger.Panic().Msgf(message, args)
+		logger.Panic().Msgf(message, args...)
 	}
 }

@@ -41,13 +41,13 @@ type dialects struct {
 var (
 	// Permissions has the types of permissions that can be assigned
 	Permissions = permissionTypes{
-		Create: "create:%s",
-		Read:   "read:%s",
-		Update: "update:%s",
-		Delete: "delete:%s",
-		List:   "list:%s",
-		Assign: "assign:%s",
-		Upload: "upload:%s",
+		Create: "create",
+		Read:   "read",
+		Update: "update",
+		Delete: "delete",
+		List:   "list",
+		Assign: "assign",
+		Upload: "upload",
 	}
 
 	// EntityNames the names of the tables in the server
@@ -90,7 +90,7 @@ func GetTableName(tablename string) string {
 
 // FormatPermissionTag returns a string formatted action:entity permission
 func FormatPermissionTag(action string, entity string) string {
-	return fmt.Sprintf(action, entity)
+	return fmt.Sprintf("%v:%v", action, entity)
 }
 
 // FormatPermissionDesc returns a string with the description of the
