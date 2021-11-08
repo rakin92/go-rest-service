@@ -19,6 +19,7 @@ import (
 func AuthProviders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// You have to add value context with provider name to get provider name in GetProviderName method
+		logger.Info("%v", c)
 		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
 		// try to get the user without re-authenticating
 		if gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request); err != nil {
@@ -87,7 +88,6 @@ func Logout() gin.HandlerFunc {
 
 // addProviderToContext adds our auth providers to context
 func addProviderToContext(c *gin.Context, value interface{}) *http.Request {
-	c.Set(string(consts.ProjectContextKeys.GothicProviderCtxKey), value)
 	return c.Request.WithContext(context.WithValue(c.Request.Context(),
-		consts.ProjectContextKeys.GothicProviderCtxKey, value))
+		string(consts.ProjectContextKeys.GothicProviderCtxKey), value))
 }
