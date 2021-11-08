@@ -28,11 +28,11 @@ func main() {
 			Algorithm: env.MustGet("AUTH_JWT_SIGNING_ALGORITHM"),
 		},
 		Database: cfg.DB{
-			Dialect:     env.MustGet("GORM_DIALECT"),
-			DSN:         env.MustGet("GORM_CONNECTION_DSN"),
-			SeedDB:      env.MustGetBool("GORM_SEED_DB"),
-			LogMode:     env.MustGetBool("GORM_LOGMODE"),
-			AutoMigrate: env.MustGetBool("GORM_AUTOMIGRATE"),
+			Dialect:     env.MustGet("DB_DIALECT"),
+			DSN:         env.MustGet("DB_CONNECTION_DSN"),
+			SeedDB:      env.MustGetBool("DB_SEED_DB"),
+			LogMode:     env.MustGetBool("DB_LOGMODE"),
+			AutoMigrate: env.MustGetBool("DB_AUTOMIGRATE"),
 		},
 		MDB: cfg.MongoDB{
 			Host:     env.MustGet("MONGO_DB_HOST"),
