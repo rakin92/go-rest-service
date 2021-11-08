@@ -64,7 +64,7 @@ func Middleware(serName string) gin.HandlerFunc {
 		}
 
 		lf.User = "anonymous"
-		u, exist := c.Get(string(consts.ProjectContextKeys.UserCtxKey))
+		u, exist := c.Get(string(consts.ProjectContextKeys.UserIDCtxKey))
 		if exist {
 			lf.User = fmt.Sprintf("%v", u)
 		}

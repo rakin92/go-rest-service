@@ -198,7 +198,7 @@ func addToContext(c *gin.Context, key consts.ContextKey, value interface{}) *htt
 
 // addUserIdToContext adds user id to our gin context
 func addUserIdToContext(c *gin.Context, userID uuid.UUID) *http.Request {
-	usrCtxKey := consts.ProjectContextKeys.UserCtxKey
+	usrCtxKey := consts.ProjectContextKeys.UserIDCtxKey
 
 	c.Set(string(usrCtxKey), userID)
 	return c.Request.WithContext(context.WithValue(c.Request.Context(), usrCtxKey, userID))

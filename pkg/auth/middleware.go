@@ -6,6 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/rakin92/go-rest-service/internal/orm"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/consts"
 	"github.com/rakin92/go-rest-service/pkg/logger"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,7 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 				authError(c, ErrForbidden)
 			}
 			if user != nil {
+				c.Request = addToContext(c, consts.ProjectContextKeys.UserCtxKey, user)
 				c.Request = addUserIdToContext(c, user.ID)
 				logger.Debug("User authenticated via api: %s", user.ID)
 			}
@@ -60,6 +62,7 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 								authError(c, ErrForbidden)
 							} else {
 								if user != nil {
+									c.Request = addToContext(c, consts.ProjectContextKeys.UserCtxKey, user)
 									c.Request = addUserIdToContext(c, user.ID)
 									logger.Debug("User: %s", user.ID)
 								}
