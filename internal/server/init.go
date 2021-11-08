@@ -25,6 +25,9 @@ func initializeAuthProviders(sc *cfg.Server) error {
 		case "twitter":
 			providers = append(providers, twitter.New(p.ClientKey, p.Secret,
 				sc.SchemaVersionedEndpoint("/auth/"+p.Provider+"/callback")))
+		case "auth0":
+			providers = append(providers, twitter.New(p.ClientKey, p.Secret,
+				sc.SchemaVersionedEndpoint("/auth/"+p.Provider+"/callback")))
 		}
 	}
 	goth.UseProviders(providers...)
