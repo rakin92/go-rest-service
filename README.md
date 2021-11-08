@@ -1,6 +1,6 @@
 # GO REST Service - Template
 
-[![Build Status](https://travis-ci.org/rakin92/go-rest-service.svg?branch=main)](https://travis-ci.org/rakin92/go-rest-service)
+[![Build Status](https://app.travis-ci.com/rakin92/go-rest-service.svg?branch=main)](https://app.travis-ci.com/rakin92/go-rest-service)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rakin92/go-rest-service)](https://goreportcard.com/report/github.com/rakin92/go-rest-service)
 
 A simple Go REST service using:
