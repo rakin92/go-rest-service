@@ -1,4 +1,4 @@
-package sql
+package dbm
 
 import (
 	"fmt"
@@ -13,10 +13,10 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
-// MigrateScripts runs the migrations scripts in scripts folder
+// Migrate runs the migrations scripts in scripts folder
 func Migrate(c *cfg.DB) error {
-	logger.Info("[Migration.Scripts] Running DB Migration Scripts")
-	mg, err := migrate.New("file://pkg/db/sql/scripts/", c.DSN)
+	logger.Info("[Migrate.Scripts] Running DB Migration Scripts")
+	mg, err := migrate.New("file://pkg/storage/dbm/scripts/", c.DSN)
 	if err != nil {
 		return fmt.Errorf("[Migration.Scripts]: %v", err)
 	}
@@ -26,5 +26,6 @@ func Migrate(c *cfg.DB) error {
 	if err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("[Migration.Scripts]: %v", err)
 	}
+	logger.Info("[Migrate.Scripts] DB Migration Scripts complete")
 	return nil
 }

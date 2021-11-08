@@ -21,6 +21,7 @@ func (r *MDB) Close() {
 
 // Init initializes the mongo db connection
 func Init(c *cfg.MongoDB) (*MDB, error) {
+	logger.Info("[Mongo.Init] Connecting to Mongo DB %s", c.Database)
 	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(c.Host))
 	if err != nil {
 		return nil, err
@@ -32,6 +33,6 @@ func Init(c *cfg.MongoDB) (*MDB, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	logger.Info("[Mongo.Init] Connected to Mongo DB %s", c.Database)
 	return &MDB{DB: mongoClient.Database(c.Database)}, nil
 }
