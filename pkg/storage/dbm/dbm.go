@@ -10,12 +10,13 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
-type SQLDB struct {
+// DBM is the database management struct
+type DBM struct {
 	DB *sqlx.DB
 }
 
 // Init creates a connection to our database via sqlx
-func Init(c *cfg.DB) (*SQLDB, error) {
+func Init(c *cfg.DB) (*DBM, error) {
 	logger.Info("[SQL.Connect] Connecting to %s DB", c.Dialect)
 	d, err := sqlx.Connect(c.Dialect, c.DSN)
 	if err != nil {
@@ -30,5 +31,5 @@ func Init(c *cfg.DB) (*SQLDB, error) {
 	}
 	d.SetConnMaxLifetime(time.Hour)
 	logger.Info("[SQL.Connect] Connected to %s DB", c.Dialect)
-	return &SQLDB{DB: d}, nil
+	return &DBM{DB: d}, nil
 }

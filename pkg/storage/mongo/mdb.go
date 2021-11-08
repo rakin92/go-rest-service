@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// MDB is the mongo db (NoSQL) struct
 type MDB struct {
 	DB *mongo.Database
 }
