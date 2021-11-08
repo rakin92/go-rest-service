@@ -84,7 +84,7 @@ func (k *UserAPIKey) BeforeSave(db *gorm.DB) error {
 // HasRole verifies if user possesses a role
 func (u *User) HasRole(roleID int) (bool, error) {
 	for _, r := range u.Roles {
-		if r.ID == roleID {
+		if r.ID == uint(roleID) {
 			return true, nil
 		}
 	}

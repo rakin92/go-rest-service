@@ -27,7 +27,7 @@ type BaseModelSoftDelete struct {
 // an INT key
 type BaseModelSeq struct {
 	// Default values for PostgreSQL, change it for other DBMS
-	ID        int        `gorm:"primary_key,auto_increment"`
+	ID        uint       `gorm:"primary_key,auto_increment"`
 	CreatedAt *time.Time `gorm:"index;not null;default:current_timestamp"`
 	UpdatedAt *time.Time `gorm:"index;not null;default:current_timestamp"`
 }

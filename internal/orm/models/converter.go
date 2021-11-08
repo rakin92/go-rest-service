@@ -44,7 +44,7 @@ func GothUserToDBUserProfile(i *goth.User, update bool, ids ...int) (o *UserProf
 	}
 	if len(ids) > 0 {
 		updID := ids[0]
-		o.ID = updID
+		o.ID = uint(updID)
 	}
 	return o, err
 }
