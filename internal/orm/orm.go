@@ -11,6 +11,7 @@ import (
 	"github.com/rakin92/go-rest-service/internal/orm/models"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"github.com/rakin92/go-rest-service/pkg/consts"
+	"github.com/rakin92/go-rest-service/pkg/db/sql"
 	"github.com/rakin92/go-rest-service/pkg/logger"
 
 	"gorm.io/driver/postgres"
@@ -40,9 +41,9 @@ func Init(c *cfg.DB) (*ORM, error) {
 	// Automigrate tables
 	if c.AutoMigrate {
 		// migrates our sql scripts
-		err = migration.MigrateScripts(c)
+		err = sql.Migrate(c)
 		if err != nil {
-			logger.Fatal(&err, "[ORM.autoMigrate] scripts err: %s", err.Error())
+			logger.Fatal(&err, "[sql.Migrate] scripts err: %s", err.Error())
 		}
 		// migrats our orm schema
 		err = migration.ServiceAutoMigration(orm.DB)

@@ -23,21 +23,21 @@ services:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=sOmE_sEcUrE_pAsS
     - POSTGRES_DB=localdb
-  dev:
-    build:
-      context: .
-      dockerfile: docker/dev.dockerfile
-    env_file:
-      - .env
-    ports:
-      - 7001:5000
-    depends_on:
-      - "postgres-db"
-  prod:
-    build:
-      context: .
-      dockerfile: docker/prod.dockerfile
-    env_file:
-      - .env
-    ports:
-      - 80:80
+  # dev:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/dev.dockerfile
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - 7001:5000
+  #   depends_on:
+  #     - "postgres-db"
+  # prod:
+  #   build:
+  #     context: .
+  #     dockerfile: docker/prod.dockerfile
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - 80:80
