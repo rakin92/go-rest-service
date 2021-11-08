@@ -14,6 +14,7 @@ type Server struct {
 	JWT            JWT
 	Cache          Cache
 	Database       DB
+	MDB            MongoDB
 	AuthProviders  []AuthProvider
 }
 
@@ -39,6 +40,13 @@ type DB struct {
 	AutoMigrate bool
 	MaxCon      int
 	MaxIdleCon  int
+}
+
+// MongoDB defines the configuration for the mongo DB config
+type MongoDB struct {
+	Dialect  string
+	Host     string
+	Database string
 }
 
 // AuthProvider defines the configuration for the Goth config

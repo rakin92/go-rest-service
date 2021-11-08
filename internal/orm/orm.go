@@ -27,9 +27,9 @@ type ORM struct {
 	DB *gorm.DB
 }
 
-// Factory creates a db connection with the selected dialect and connection
+// Init creates a db connection with the selected dialect and connection
 // along with running all the db migrations
-func Factory(c *cfg.DB) (*ORM, error) {
+func Init(c *cfg.DB) (*ORM, error) {
 	db, err := gorm.Open(postgres.Open(c.DSN))
 	if err != nil {
 		logger.Panic(&err, "[ORM] err: %s", err.Error())

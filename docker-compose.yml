@@ -14,6 +14,7 @@ services:
     environment:
     - MONGO_INITDB_ROOT_USERNAME=mongo
     - MONGO_INITDB_ROOT_PASSWORD=sOmE_sEcUrE_pAsS
+    - MONGO_INITDB_DATABASE=localdb
   postgres-db:
     image: "postgres:alpine"
     ports:

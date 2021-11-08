@@ -34,6 +34,10 @@ func main() {
 			LogMode:     env.MustGetBool("GORM_LOGMODE"),
 			AutoMigrate: env.MustGetBool("GORM_AUTOMIGRATE"),
 		},
+		MDB: cfg.MongoDB{
+			Host:     env.MustGet("MONGO_DB_HOST"),
+			Database: env.MustGet("MONGO_DB_DATABASE"),
+		},
 		AuthProviders: []cfg.AuthProvider{
 			{
 				Provider:  "facebook",
@@ -54,7 +58,7 @@ func main() {
 	}
 
 	// Initialize our database orm
-	o, err := orm.Factory(&conf.Database)
+	o, err := orm.Init(&conf.Database)
 	if err != nil {
 		logger.Panic(&err, "[ORM]: Failed to connect to database: %s", err.Error())
 	}
