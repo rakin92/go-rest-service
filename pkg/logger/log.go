@@ -1,3 +1,4 @@
+// Package logger is an wrapper around the zerolog library
 package logger
 
 import (

@@ -26,9 +26,9 @@ type JWT struct {
 
 // Cache defines the configuration for the cache
 type Cache struct {
-	Server      string
-	Password    string
-	TimeoutHour int
+	Server   string
+	Password string
+	Timeout  string // time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". ex: 500ms
 }
 
 // DB defines the configuration for the DB config

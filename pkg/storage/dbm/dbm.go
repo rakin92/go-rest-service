@@ -1,3 +1,5 @@
+// Package dbm is a database management package.
+// It allows us to interact with sql database via using sqlx.
 package dbm
 
 import (

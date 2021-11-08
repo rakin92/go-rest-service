@@ -1,3 +1,6 @@
+// Package auth holds some standard auth functionalities.
+// It provides us middleware easily into our routers,
+// and manage access control of our apis.
 package auth
 
 import (

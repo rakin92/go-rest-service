@@ -6,6 +6,7 @@ import (
 	"github.com/rakin92/go-rest-service/internal/server/routes"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"github.com/rakin92/go-rest-service/pkg/logger"
+	"github.com/rakin92/go-rest-service/pkg/storage/cache"
 )
 
 // registerRoutes register the routes for the server
@@ -35,7 +36,7 @@ func registerRoutes(sc *cfg.Server, r *gin.Engine, orm *orm.ORM) (err error) {
 }
 
 // Run spins up the server
-func Run(sc *cfg.Server, orm *orm.ORM) {
+func Run(sc *cfg.Server, orm *orm.ORM, che *cache.Cache) {
 	r := gin.New()
 
 	r.Use(gin.Recovery())

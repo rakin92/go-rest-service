@@ -7,6 +7,7 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"github.com/rakin92/go-rest-service/pkg/env"
 	"github.com/rakin92/go-rest-service/pkg/logger"
+	"github.com/rakin92/go-rest-service/pkg/storage/cache"
 )
 
 // main function starts our service by initializing our server configuration
@@ -38,6 +39,11 @@ func main() {
 			Host:     env.MustGet("MONGO_DB_HOST"),
 			Database: env.MustGet("MONGO_DB_DATABASE"),
 		},
+		Cache: cfg.Cache{
+			Server:   env.MustGet("CACHE_SERVER"),
+			Password: env.MustGet("CACHE_PASSWORD"),
+			Timeout:  env.MustGet("CACHE_TIMEOUT"),
+		},
 		AuthProviders: []cfg.AuthProvider{
 			{
 				Provider:  "facebook",
@@ -63,6 +69,11 @@ func main() {
 		logger.Panic(&err, "[ORM]: Failed to connect to database: %s", err.Error())
 	}
 
+	c, err := cache.Init(&conf.Cache)
+	if err != nil {
+		logger.Panic(&err, "[ORM]: Failed to connect to cache: %s", err.Error())
+	}
+
 	// Runs the gin service
-	server.Run(conf, o)
+	server.Run(conf, o, c)
 }

@@ -1,3 +1,4 @@
+// Package mongo to allow us to interact with NoSQL via MongoDB.
 package mongo
 
 import (
