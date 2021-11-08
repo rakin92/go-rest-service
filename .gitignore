@@ -18,3 +18,4 @@ build/*
 __debug*
 
 tmp/*
+coverage.txt
