@@ -1,16 +1,12 @@
 package models
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
 	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/rakin92/go-rest-service/pkg/consts"
 	"gorm.io/gorm"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // ## Entity definitions
@@ -80,11 +76,6 @@ func (k *UserAPIKey) BeforeSave(db *gorm.DB) error {
 			return err
 		}
 	}
-	if hash, err := bcrypt.GenerateFromPassword([]byte(k.UserID.String()), 0); err == nil {
-		hasher := sha1.New()
-		hasher.Write(hash)
-		db.Scopes().Set("APIKey", hex.EncodeToString(hasher.Sum(nil)))
-	}
 	return nil
 }
 
@@ -102,19 +93,13 @@ func (u *User) HasRole(roleID int) (bool, error) {
 
 // HasPermission verifies if user has a specific permission
 func (u *User) HasPermission(permission string, entity string) (bool, error) {
-	tag := fmt.Sprintf(permission, consts.GetTableName(entity))
-	for _, r := range u.Permissions {
-		if r.Tag == tag {
+	tag := fmt.Sprintf("%s:%s", permission, consts.GetTableName(entity))
+	for _, p := range u.Permissions {
+		if p.Tag == tag {
 			return true, nil
 		}
 	}
 	return false, fmt.Errorf("user has no permission: [%s]", tag)
-}
-
-// HasPermissionBool verifies if user has a specific permission - returns t/f
-func (u *User) HasPermissionBool(permission string, entity string) bool {
-	p, _ := u.HasPermission(permission, entity)
-	return p
 }
 
 // HasPermissionTag verifies if user has a specific permission tag
@@ -133,19 +118,4 @@ func (u *User) CanUpdate(id string) (bool, error) {
 		return true, nil
 	}
 	return false, fmt.Errorf("user [%s] is not the owner", id)
-}
-
-// GetDisplayName returns the displayName if not nil, or the first + last name
-func (u *User) GetDisplayName() string {
-	displayName := ""
-	if u.FirstName != nil {
-		displayName += *u.FirstName
-	}
-	if u.LastName != nil {
-		displayName += " " + *u.LastName
-	}
-	if u.LastName != nil {
-		displayName = *u.LastName
-	}
-	return strings.TrimSpace(displayName)
 }

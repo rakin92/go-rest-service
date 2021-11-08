@@ -7,6 +7,13 @@ services:
     - "6379:6379"
     environment:
     - REDIS_REPLICATION_MODE=master
+  mongo-db:
+    image: "mongo:latest"
+    ports:
+    - 27017:27017
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=mongo
+    - MONGO_INITDB_ROOT_PASSWORD=sOmE_sEcUrE_pAsS
   postgres-db:
     image: "postgres:alpine"
     ports:

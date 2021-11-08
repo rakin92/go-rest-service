@@ -1,5 +1,5 @@
 #!/bin/sh
-app="service"
+app="service-tests"
 program="$buildPath/$app"
 
 printf "\nStart testing: $app\n"
@@ -7,5 +7,5 @@ printf "\nStart testing: $app\n"
 export $(grep -v '^#' .env | xargs)
 time go test ./...
 # This should unset all the ENV vars, just in case.
-unset $(grep -v '^#' .env | sed -E 's/(.*)=.*/\1/' | xargs)
+unset $(grep -v '^#' .env | sed -E 's/(.*)=.*/\1/''' | xargs)
 printf "\nRun tests completed: $app\n\n"

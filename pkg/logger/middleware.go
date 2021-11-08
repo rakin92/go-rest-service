@@ -26,12 +26,12 @@ func ErrorLogger() gin.HandlerFunc {
 }
 
 // ErrorLoggerT is a handler function for any gin error type
-func ErrorLoggerT(typ gin.ErrorType) gin.HandlerFunc {
+func ErrorLoggerT(t gin.ErrorType) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
 		if !c.Writer.Written() {
-			json := c.Errors.ByType(typ).JSON()
+			json := c.Errors.ByType(t).JSON()
 			if json != nil {
 				c.JSON(-1, json)
 			}

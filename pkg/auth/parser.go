@@ -12,12 +12,11 @@ import (
 
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"github.com/rakin92/go-rest-service/pkg/consts"
-	"github.com/rakin92/go-rest-service/pkg/env"
 )
 
 var (
 	// APIKeyHeader The API key header name
-	APIKeyHeader = env.MustGet("AUTH_API_KEY_HEADER")
+	APIKeyHeader = "x-api-key"
 
 	// TokenHeadName is a string in the header. Default value is "Bearer"
 	TokenHeadName = "Bearer"
@@ -74,6 +73,7 @@ var (
 	ErrInvalidSigningAlgorithm = errors.New("invalid signing algorithm")
 )
 
+// jwtFromHeader retrieves jwt token from header
 func jwtFromHeader(c *gin.Context, key string) (string, error) {
 	authHeader := c.Request.Header.Get(key)
 
@@ -106,7 +106,10 @@ func tokenFromQuery(c *gin.Context, key string) (string, error) {
 }
 
 func tokenFromCookie(c *gin.Context, key string) (string, error) {
-	cookie, _ := c.Cookie(key)
+	cookie, err := c.Cookie(key)
+	if err != nil {
+		return "", err
+	}
 	if cookie == "" {
 		return "", ErrEmptyCookieToken
 	}
