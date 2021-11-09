@@ -10,5 +10,10 @@ before_install:
 script:
   - sh scripts/run-test.sh
 
+cache:
+  directories:
+  - $HOME/.cache/go-build        # Cache the binaries
+  - $HOME/gopath/pkg/mod         # Cache the Go modules
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)

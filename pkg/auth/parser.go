@@ -71,6 +71,9 @@ var (
 
 	// ErrInvalidSigningAlgorithm indicates signing algorithm is invalid, needs to be HS256, HS384, HS512, RS256, RS384 or RS512
 	ErrInvalidSigningAlgorithm = errors.New("invalid signing algorithm")
+
+	jwtParse            = jwt.Parse
+	jwtGetSigningMethod = jwt.GetSigningMethod
 )
 
 // jwtFromHeader retrieves jwt token from header
@@ -106,10 +109,7 @@ func tokenFromQuery(c *gin.Context, key string) (string, error) {
 }
 
 func tokenFromCookie(c *gin.Context, key string) (string, error) {
-	cookie, err := c.Cookie(key)
-	if err != nil {
-		return "", err
-	}
+	cookie, _ := c.Cookie(key)
 	if cookie == "" {
 		return "", ErrEmptyCookieToken
 	}
@@ -152,8 +152,8 @@ func ParseToken(c *gin.Context, sc *cfg.Server) (t *jwt.Token, err error) {
 	}
 	SigningAlgorithm := sc.JWT.Algorithm
 	Key := []byte(sc.JWT.Secret)
-	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if jwt.GetSigningMethod(SigningAlgorithm) != t.Method {
+	return jwtParse(token, func(t *jwt.Token) (interface{}, error) {
+		if jwtGetSigningMethod(SigningAlgorithm) != t.Method {
 			return nil, ErrInvalidSigningAlgorithm
 		}
 		// save token string if vaild

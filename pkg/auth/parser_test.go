@@ -7,7 +7,8 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rakin92/go-rest-service/pkg/logger"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/rakin92/go-rest-service/pkg/cfg"
 )
 
 func Test_jwtFromHeader(t *testing.T) {
@@ -235,7 +236,6 @@ func Test_tokenFromCookie(t *testing.T) {
 				MaxAge: 300,
 			}
 			req.AddCookie(cookie)
-			logger.Info("test")
 			got, err := tokenFromCookie(tt.args.c, tt.args.key)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("tokenFromCookie() error = %v, wantErr %v", err, tt.wantErr)
@@ -303,4 +303,158 @@ func Test_tokenFromParam(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestParseAPIKey(t *testing.T) {
+	t.Run("api key from cookie", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{}
+		cookie := &http.Cookie{
+			Name:   "api_key",
+			Value:  "token",
+			MaxAge: 300,
+		}
+		req.AddCookie(cookie)
+		gotApiKey, err := ParseAPIKey(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey != "token" {
+			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "token")
+		}
+	})
+
+	t.Run("api key from header", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{}
+		req.Header.Set(APIKeyHeader, "token")
+		gotApiKey, err := ParseAPIKey(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey != "token" {
+			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "token")
+		}
+	})
+
+	t.Run("api key from query", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{}
+		req.URL.RawQuery = "api_key=token"
+		gotApiKey, err := ParseAPIKey(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey != "token" {
+			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "token")
+		}
+	})
+
+	t.Run("api key from param not supported", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{}
+		ctx.Params = []gin.Param{
+			{
+				Key:   "api_key",
+				Value: "token",
+			},
+		}
+		gotApiKey, err := ParseAPIKey(ctx, svc)
+		if (err != nil) != true {
+			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, true)
+			return
+		}
+		if gotApiKey != "" {
+			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "")
+		}
+	})
+}
+
+func TestParseToken(t *testing.T) {
+	jwtParse = func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+		return &jwt.Token{Raw: "token"}, nil
+	}
+	t.Run("jwt token from cookie", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{
+			JWT: cfg.JWT{
+				Algorithm: "HS512",
+				Secret:    "{JWTsecret}",
+			},
+		}
+		cookie := &http.Cookie{
+			Name:   "jwt",
+			Value:  "token",
+			MaxAge: 300,
+		}
+		req.AddCookie(cookie)
+		gotApiKey, err := ParseToken(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseToken() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey.Raw != "token" {
+			t.Errorf("ParseToken() = %v, want %v", gotApiKey, "token")
+		}
+	})
+	t.Run("token from query", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{
+			JWT: cfg.JWT{
+				Algorithm: "HS512",
+				Secret:    "{JWTsecret}",
+			},
+		}
+		req.URL.RawQuery = "token=token"
+		gotApiKey, err := ParseToken(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseToken() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey.Raw != "token" {
+			t.Errorf("ParseToken() = %v, want %v", gotApiKey, "token")
+		}
+	})
+	t.Run("token from header", func(t *testing.T) {
+		hed := http.Header{}
+		url := &url.URL{}
+		req := http.Request{Header: hed, URL: url}
+		ctx := &gin.Context{Request: &req}
+		svc := &cfg.Server{
+			JWT: cfg.JWT{
+				Algorithm: "HS512",
+				Secret:    "{JWTsecret}",
+			},
+		}
+		req.Header.Set("Authorization", "Bearer token")
+		gotApiKey, err := ParseToken(ctx, svc)
+		if (err != nil) != false {
+			t.Errorf("ParseToken() error = %v, wantErr %v", err, false)
+			return
+		}
+		if gotApiKey.Raw != "token" {
+			t.Errorf("ParseToken() = %v, want %v", gotApiKey, "token")
+		}
+	})
 }
