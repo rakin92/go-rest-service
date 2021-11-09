@@ -57,7 +57,7 @@ func Init(c *cfg.DB) (*ORM, error) {
 }
 
 //FindUserByAPIKey finds the user that is related to the API key
-func (o *ORM) FindUserByAPIKey(apiKey string) (*models.User, error) {
+func FindUserByAPIKey(apiKey string, o *ORM) (*models.User, error) {
 	if apiKey == "" {
 		return nil, errors.New("API key is empty")
 	}
@@ -72,7 +72,7 @@ func (o *ORM) FindUserByAPIKey(apiKey string) (*models.User, error) {
 }
 
 // FindUserByJWT finds the user that is related to the APIKey token
-func (o *ORM) FindUserByJWT(email string, provider string, userID string) (*models.User, error) {
+func FindUserByJWT(email string, provider string, userID string, o *ORM) (*models.User, error) {
 	if provider == "" || userID == "" {
 		return nil, errors.New("provider or userId empty")
 	}
