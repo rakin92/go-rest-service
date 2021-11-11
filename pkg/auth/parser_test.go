@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"reflect"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
+	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
 func Test_jwtFromHeader(t *testing.T) {
@@ -457,4 +460,91 @@ func TestParseToken(t *testing.T) {
 			t.Errorf("ParseToken() = %v, want %v", gotApiKey, "token")
 		}
 	})
+}
+
+func Test_addToContext(t *testing.T) {
+	type testObj struct {
+		key   string
+		value string
+	}
+	hed := http.Header{}
+	url := &url.URL{}
+	req := &http.Request{Header: hed, URL: url}
+	ctx := &gin.Context{Request: req}
+	type args struct {
+		c     *gin.Context
+		key   consts.ContextKey
+		value interface{}
+	}
+
+	tObj := testObj{
+		key:   "user",
+		value: "id",
+	}
+	tests := []struct {
+		name string
+		args args
+		want testObj
+	}{
+		{
+			name: "setting context",
+			args: args{
+				c:     ctx,
+				key:   consts.ProjectContextKeys.UserCtxKey,
+				value: tObj,
+			},
+			want: tObj,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			addToContext(tt.args.c, tt.args.key, tt.args.value)
+			ctxObj, exist := tt.args.c.Get(string(consts.ProjectContextKeys.UserCtxKey))
+			if exist != true {
+				t.Errorf("addToContext() adds to context got %v, want %v", false, true)
+			}
+			if !reflect.DeepEqual(ctxObj, tt.want) {
+				t.Errorf("addToContext() adds context got %v, want %v", ctxObj, tt.want)
+			}
+		})
+	}
+}
+
+func Test_addUserIdToContext(t *testing.T) {
+	hed := http.Header{}
+	url := &url.URL{}
+	req := &http.Request{Header: hed, URL: url}
+	ctx := &gin.Context{Request: req}
+
+	uid, _ := uuid.NewV4()
+	type args struct {
+		c      *gin.Context
+		userID uuid.UUID
+	}
+	tests := []struct {
+		name string
+		args args
+		want uuid.UUID
+	}{
+		{
+			name: "setting context",
+			args: args{
+				c:      ctx,
+				userID: uid,
+			},
+			want: uid,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			addUserIdToContext(tt.args.c, tt.args.userID)
+			ctxObj, exist := tt.args.c.Get(string(consts.ProjectContextKeys.UserIDCtxKey))
+			if exist != true {
+				t.Errorf("addUserIdToContext() adds to context got %v, want %v", false, true)
+			}
+			if !reflect.DeepEqual(ctxObj, tt.want) {
+				t.Errorf("addUserIdToContext() adds context got %v, want %v", ctxObj, tt.want)
+			}
+		})
+	}
 }

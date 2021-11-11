@@ -15,13 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	findUserByAPIKey = orm.FindUserByAPIKey
-	findUserByJWT    = orm.FindUserByJWT
-	parseToken       = ParseToken
-	parseAPIKey      = ParseAPIKey
-)
-
 func authError(c *gin.Context, err error) {
 	errKey := "message"
 	errMsgHeader := "[Auth] error: "
@@ -34,8 +27,8 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 	logger.Info("[Auth.Middleware] Applied to path: %s", path)
 	return gin.HandlerFunc(func(c *gin.Context) {
 		// Check and authenticate with api key
-		if a, err := parseAPIKey(c, cfg); err == nil {
-			user, err := findUserByAPIKey(a, orm)
+		if a, err := ParseAPIKey(c, cfg); err == nil {
+			user, err := orm.FindUserByAPIKey(a)
 			if err != nil {
 				authError(c, ErrForbidden)
 			}
@@ -50,7 +43,7 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 				authError(c, err)
 			} else {
 				// Authenticate via JWT Token
-				t, err := parseToken(c, cfg)
+				t, err := ParseToken(c, cfg)
 				if err != nil {
 					authError(c, err)
 				} else {
@@ -67,7 +60,7 @@ func Middleware(path string, cfg *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 								algo := claims["alg"].(string)
 								logger.Warn("\n\nalgo: %s\n\n", algo)
 							}
-							if user, err := findUserByJWT(email, issuer, userid, orm); err != nil {
+							if user, err := orm.FindUserByJWT(email, issuer, userid); err != nil {
 								authError(c, ErrForbidden)
 							} else {
 								if user != nil {

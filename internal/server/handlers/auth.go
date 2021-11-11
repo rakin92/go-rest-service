@@ -15,10 +15,6 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/logger"
 )
 
-var (
-	findUserByJWT = orm.FindUserByJWT
-)
-
 // AuthProviders begin login with the auth provider
 func AuthProviders() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -46,7 +42,7 @@ func Callback(sc *cfg.Server, orm *orm.ORM) gin.HandlerFunc {
 		}
 
 		// finds the user in our system from goth jwt
-		u, err := findUserByJWT(gothUsr.Email, gothUsr.Provider, gothUsr.UserID, orm)
+		u, err := orm.FindUserByJWT(gothUsr.Email, gothUsr.Provider, gothUsr.UserID)
 		if err != nil {
 			if u, err = orm.UpsertUserProfile(&gothUsr); err != nil {
 				logger.Error(&err, "[Auth.CallBack.UserLoggedIn.FindUserByJWT.Error]: %s", err.Error())
