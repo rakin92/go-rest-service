@@ -158,3 +158,10 @@ func TestInvalidArgValue(t *testing.T) {
 	assert.IsType(t, reflect.TypeOf(got), reflect.TypeOf(e))
 	assert.Equal(t, got.Error(), "Invalid value for argument: type: error")
 }
+
+func TestErrorfn(t *testing.T) {
+	e := errors.New("error")
+	got := logger.Errorfn("func", e)
+	assert.IsType(t, reflect.TypeOf(got), reflect.TypeOf(e))
+	assert.Equal(t, got.Error(), "[func]: error")
+}
