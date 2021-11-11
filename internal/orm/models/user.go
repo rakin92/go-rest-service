@@ -68,17 +68,6 @@ func (u *User) BeforeSave(db *gorm.DB) error {
 	return nil
 }
 
-// BeforeSave hook for UserAPIKey
-func (k *UserAPIKey) BeforeSave(db *gorm.DB) error {
-	if k.Name == "" {
-		u := &User{}
-		if err := db.Where("id = ?", k.UserID).First(u).Error; err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // ## Helper functions
 
 // HasRole verifies if user possesses a role
