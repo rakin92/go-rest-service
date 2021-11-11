@@ -37,7 +37,7 @@ func Init(c *cfg.DB) (*ORM, error) {
 	}
 	orm := &ORM{DB: db}
 	// Log every SQL command on dev, @prod: this should be disabled? Maybe.
-	// db.LogMode(c.LogMode) TODO - look into this
+	// db.LogMode(c.LogMode) TODO: look into this
 	// Automigrate tables
 	if c.AutoMigrate {
 		// migrates our sql scripts
@@ -62,9 +62,9 @@ func (o *ORM) FindUserByAPIKey(apiKey string) (*models.User, error) {
 		return nil, errors.New("API key is empty")
 	}
 	uak := &models.UserAPIKey{}
-	up := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Permissions)
-	ur := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Roles)
-	if err := o.DB.Preload(sUserTbl).Preload(up).Preload(ur).
+	usrPerm := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Permissions)
+	usrRole := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Roles)
+	if err := o.DB.Preload(sUserTbl).Preload(usrPerm).Preload(usrRole).
 		First(uak, "api_key = ?", apiKey).Error; err != nil {
 		return nil, err
 	}
@@ -78,9 +78,9 @@ func (o *ORM) FindUserByJWT(email string, provider string, userID string) (*mode
 	}
 	tx := o.DB.Begin()
 	p := &models.UserProfile{}
-	up := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Permissions)
-	ur := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Roles)
-	if err := tx.Preload(sUserTbl).Preload(up).Preload(ur).
+	usrPerm := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Permissions)
+	usrRole := fmt.Sprintf(nestedFmt, sUserTbl, consts.EntityNames.Roles)
+	if err := tx.Preload(sUserTbl).Preload(usrPerm).Preload(usrRole).
 		First(p, "email  = ? AND provider = ? AND external_user_id = ?", email, provider, userID).Error; err != nil {
 		return nil, err
 	}

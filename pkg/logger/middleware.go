@@ -20,25 +20,6 @@ type logFields struct {
 	User       string
 }
 
-// ErrorLogger is a handler function for any gin error type
-func ErrorLogger() gin.HandlerFunc {
-	return ErrorLoggerT(gin.ErrorTypeAny)
-}
-
-// ErrorLoggerT is a handler function for any gin error type
-func ErrorLoggerT(t gin.ErrorType) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		if !c.Writer.Written() {
-			json := c.Errors.ByType(t).JSON()
-			if json != nil {
-				c.JSON(-1, json)
-			}
-		}
-	}
-}
-
 // Middleware to log our gin requests in formatted JSON.
 // Can be added to be used by our Gin router.
 func Middleware(serName string) gin.HandlerFunc {
@@ -75,7 +56,7 @@ func Middleware(serName string) gin.HandlerFunc {
 
 // logSwitch logs different levels of logs based on status code
 func logSwitch(lf *logFields) {
-	// TODO - look into using log with fields
+	// TODO: look into using log with fields
 	switch {
 	case lf.StatusCode >= 400 && lf.StatusCode < 500:
 		{
