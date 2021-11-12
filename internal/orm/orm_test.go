@@ -1,6 +1,6 @@
 // Package orm provides `GORM` helpers for the creation, migration and access
 // on the project's database
-package orm
+package orm_test
 
 import (
 	"errors"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/rakin92/go-rest-service/internal/orm"
 	"github.com/rakin92/go-rest-service/internal/orm/models"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"gorm.io/driver/postgres"
@@ -81,7 +82,7 @@ func TestORM_FindUserByAPIKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			o := &ORM{
+			o := &orm.ORM{
 				DB: tt.fields.DB,
 			}
 
@@ -192,7 +193,7 @@ func TestORM_FindUserByJWT(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			o := &ORM{
+			o := &orm.ORM{
 				DB: tt.fields.DB,
 			}
 
@@ -223,14 +224,14 @@ func TestInit(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *ORM
+		want    *orm.ORM
 		wantErr bool
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Init(tt.args.c)
+			got, err := orm.Init(tt.args.c)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Init() error = %v, wantErr %v", err, tt.wantErr)
 				return
