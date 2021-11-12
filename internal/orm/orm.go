@@ -103,12 +103,12 @@ func (o *ORM) UpsertUserProfile(gu *goth.User) (*models.User, error) {
 	}
 
 	if tx := db.Model(u).Save(u); tx.Error != nil {
-		return nil, err
+		return nil, tx.Error
 	}
 
 	tx = db.Where("email = ? AND provider = ? AND external_user_id = ?", gu.Email, gu.Provider, gu.UserID).First(up)
 	if tx.Error != nil && tx.Error != gorm.ErrRecordNotFound {
-		return nil, err
+		return nil, tx.Error
 	}
 
 	up, err = models.GothUserToDBUserProfile(gu, false)

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/markbates/goth"
 	"github.com/rakin92/go-rest-service/internal/orm/models"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
 	"gorm.io/driver/postgres"
@@ -59,6 +58,18 @@ func TestORM_FindUserByAPIKey(t *testing.T) {
 			name: "invalid api key",
 			args: args{
 				apiKey: "invalid",
+			},
+			fields: fields{
+				DB:   gormDB,
+				rows: nil,
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "missing api key",
+			args: args{
+				apiKey: "",
 			},
 			fields: fields{
 				DB:   gormDB,
@@ -200,39 +211,6 @@ func TestORM_FindUserByJWT(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ORM.FindUserByJWT() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestORM_UpsertUserProfile(t *testing.T) {
-	type fields struct {
-		DB *gorm.DB
-	}
-	type args struct {
-		gu *goth.User
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *models.User
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			o := &ORM{
-				DB: tt.fields.DB,
-			}
-			got, err := o.UpsertUserProfile(tt.args.gu)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ORM.UpsertUserProfile() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ORM.UpsertUserProfile() = %v, want %v", got, tt.want)
 			}
 		})
 	}
