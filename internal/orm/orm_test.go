@@ -29,6 +29,7 @@ func mockOrm(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
 	}
 	return gormDB, mock
 }
+
 func TestORM_FindUserByAPIKey(t *testing.T) {
 	gormDB, mock := mockOrm(t)
 

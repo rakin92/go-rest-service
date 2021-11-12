@@ -3,10 +3,26 @@ package models_test
 import (
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gofrs/uuid"
 	"github.com/rakin92/go-rest-service/internal/orm/models"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+func mockOrm(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
+	mockdb, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	gormDB, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: mockdb,
+	}), &gorm.Config{})
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	return gormDB, mock
+}
 
 func TestUser_HasPermissionTag(t *testing.T) {
 	type fields struct {
@@ -234,6 +250,7 @@ func TestUser_HasPermission(t *testing.T) {
 }
 
 func TestUser_BeforeSave(t *testing.T) {
+	gormDB, _ := mockOrm(t)
 	type fields struct {
 		Email string
 	}
@@ -241,12 +258,33 @@ func TestUser_BeforeSave(t *testing.T) {
 		db *gorm.DB
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
+		name      string
+		fields    fields
+		args      args
+		wantErr   bool
+		wantEmail string
 	}{
-		// TODO: Add test cases.
+		{
+			name:      "uppercase to lowercase email",
+			fields:    fields{Email: "SOME_EMAIL@EMAIL.COM"},
+			args:      args{db: gormDB},
+			wantErr:   false,
+			wantEmail: "some_email@email.com",
+		},
+		{
+			name:      "lowercase to lowercase email",
+			fields:    fields{Email: "SOME_EMAIL@EMAIL.COM"},
+			args:      args{db: gormDB},
+			wantErr:   false,
+			wantEmail: "some_email@email.com",
+		},
+		{
+			name:      "camel to lowercase email",
+			fields:    fields{Email: "SomeEmail@EMAIL.COM"},
+			args:      args{db: gormDB},
+			wantErr:   false,
+			wantEmail: "someemail@email.com",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -255,6 +293,9 @@ func TestUser_BeforeSave(t *testing.T) {
 			}
 			if err := u.BeforeSave(tt.args.db); (err != nil) != tt.wantErr {
 				t.Errorf("User.BeforeSave() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if u.Email != tt.wantEmail {
+				t.Errorf("User.BeforeSave() email = %v, wantEmail %v", u.Email, tt.wantErr)
 			}
 		})
 	}
