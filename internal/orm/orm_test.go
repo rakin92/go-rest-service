@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestORM_FindUserByAPIKey(t *testing.T) {
+func mockOrm(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) {
 	mockdb, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -27,7 +27,10 @@ func TestORM_FindUserByAPIKey(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	defer mockdb.Close()
+	return gormDB, mock
+}
+func TestORM_FindUserByAPIKey(t *testing.T) {
+	gormDB, mock := mockOrm(t)
 
 	type fields struct {
 		DB   *gorm.DB
@@ -106,17 +109,7 @@ func TestORM_FindUserByAPIKey(t *testing.T) {
 }
 
 func TestORM_FindUserByJWT(t *testing.T) {
-	mockdb, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: mockdb,
-	}), &gorm.Config{})
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	defer mockdb.Close()
+	gormDB, mock := mockOrm(t)
 
 	type fields struct {
 		DB   *gorm.DB

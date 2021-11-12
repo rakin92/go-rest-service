@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/rakin92/go-rest-service/internal/orm/models"
+	"gorm.io/gorm"
 )
 
 func TestUser_HasPermissionTag(t *testing.T) {
@@ -227,6 +228,33 @@ func TestUser_HasPermission(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("User.HasPermission() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUser_BeforeSave(t *testing.T) {
+	type fields struct {
+		Email string
+	}
+	type args struct {
+		db *gorm.DB
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &models.User{
+				Email: tt.fields.Email,
+			}
+			if err := u.BeforeSave(tt.args.db); (err != nil) != tt.wantErr {
+				t.Errorf("User.BeforeSave() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
