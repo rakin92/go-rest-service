@@ -28,7 +28,7 @@ var (
 	// - "header:<name>"
 	// - "query:<name>"
 	// - "cookie:<name>"
-	APIKeyLookup = "query:api_key,cookie:api_key,header:" + APIKeyHeader
+	APIKeyLookup = "param:api_key,query:api_key,cookie:api_key,header:" + APIKeyHeader
 
 	// TokenLookup is a string in the form of "<source>:<name>" that is used
 	// to extract token from the request.
@@ -37,7 +37,7 @@ var (
 	// - "header:<name>"
 	// - "query:<name>"
 	// - "cookie:<name>"
-	TokenLookup = "query:token,cookie:jwt,header:Authorization"
+	TokenLookup = "param:api_key,query:token,cookie:jwt,header:Authorization"
 
 	// ErrNoClaims when HTTP status 403 is given
 	ErrNoClaims = errors.New("invalid token")
@@ -156,8 +156,7 @@ func ParseToken(c *gin.Context, sc *cfg.Server) (t *jwt.Token, err error) {
 		if jwtGetSigningMethod(SigningAlgorithm) != t.Method {
 			return nil, ErrInvalidSigningAlgorithm
 		}
-		// save token string if vaild
-		// c.Set("AUTH_JWT_TOKEN", token)
+		c.Set("AUTH_JWT_TOKEN", token)
 		return Key, nil
 	})
 }

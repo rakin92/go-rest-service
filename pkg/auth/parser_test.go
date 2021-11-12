@@ -365,7 +365,7 @@ func TestParseAPIKey(t *testing.T) {
 		}
 	})
 
-	t.Run("api key from param not supported", func(t *testing.T) {
+	t.Run("api key from param", func(t *testing.T) {
 		hed := http.Header{}
 		url := &url.URL{}
 		req := http.Request{Header: hed, URL: url}
@@ -378,12 +378,12 @@ func TestParseAPIKey(t *testing.T) {
 			},
 		}
 		gotApiKey, err := ParseAPIKey(ctx, svc)
-		if (err != nil) != true {
-			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, true)
+		if (err != nil) != false {
+			t.Errorf("ParseAPIKey() error = %v, wantErr %v", err, false)
 			return
 		}
-		if gotApiKey != "" {
-			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "")
+		if gotApiKey != "token" {
+			t.Errorf("ParseAPIKey() = %v, want %v", gotApiKey, "token")
 		}
 	})
 }
