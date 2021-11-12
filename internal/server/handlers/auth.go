@@ -19,7 +19,6 @@ import (
 func AuthProviders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// You have to add value context with provider name to get provider name in GetProviderName method
-		logger.Info("%v", c)
 		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
 		// try to get the user without re-authenticating
 		if gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request); err != nil {
