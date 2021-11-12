@@ -14,10 +14,16 @@ import (
 	"github.com/rakin92/go-rest-service/pkg/consts"
 )
 
-func Test_jwtFromHeader(t *testing.T) {
+func createTestContext() (*gin.Context, *http.Request) {
 	hed := http.Header{}
-	req := http.Request{Header: hed}
-	ctx := gin.Context{Request: &req}
+	url := &url.URL{}
+	req := &http.Request{Header: hed, URL: url}
+	ctx := &gin.Context{Request: req}
+	return ctx, req
+}
+
+func Test_jwtFromHeader(t *testing.T) {
+	ctx, req := createTestContext()
 
 	const authHeader = "Authorization"
 	type args struct {
@@ -34,7 +40,7 @@ func Test_jwtFromHeader(t *testing.T) {
 		{
 			name: "jwtFromHeader missing key",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "",
 				tok: "",
 			},
@@ -44,7 +50,7 @@ func Test_jwtFromHeader(t *testing.T) {
 		{
 			name: "jwtFromHeader bad token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: authHeader,
 				tok: "BadToken",
 			},
@@ -54,7 +60,7 @@ func Test_jwtFromHeader(t *testing.T) {
 		{
 			name: "jwtFromHeader good token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: authHeader,
 				tok: "Bearer Good",
 			},
@@ -79,9 +85,7 @@ func Test_jwtFromHeader(t *testing.T) {
 }
 
 func Test_apiKeyFromHeader(t *testing.T) {
-	hed := http.Header{}
-	req := http.Request{Header: hed}
-	ctx := gin.Context{Request: &req}
+	ctx, req := createTestContext()
 
 	type args struct {
 		c   *gin.Context
@@ -97,7 +101,7 @@ func Test_apiKeyFromHeader(t *testing.T) {
 		{
 			name: "valid token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: APIKeyHeader,
 				tok: "a_valid_api_kwy",
 			},
@@ -107,7 +111,7 @@ func Test_apiKeyFromHeader(t *testing.T) {
 		{
 			name: "invalid key",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "invalid_key",
 				tok: "",
 			},
@@ -117,7 +121,7 @@ func Test_apiKeyFromHeader(t *testing.T) {
 		{
 			name: "invalid token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: APIKeyHeader,
 				tok: "",
 			},
@@ -141,10 +145,7 @@ func Test_apiKeyFromHeader(t *testing.T) {
 }
 
 func Test_tokenFromQuery(t *testing.T) {
-	hed := http.Header{}
-	url := url.URL{}
-	req := http.Request{Header: hed, URL: &url}
-	ctx := gin.Context{Request: &req}
+	ctx, req := createTestContext()
 
 	type args struct {
 		c   *gin.Context
@@ -160,7 +161,7 @@ func Test_tokenFromQuery(t *testing.T) {
 		{
 			name: "valid token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "token",
 				tok: "good_token",
 			},
@@ -170,7 +171,7 @@ func Test_tokenFromQuery(t *testing.T) {
 		{
 			name: "invalid api key",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "bad_token",
 				tok: "",
 			},
@@ -195,9 +196,7 @@ func Test_tokenFromQuery(t *testing.T) {
 }
 
 func Test_tokenFromCookie(t *testing.T) {
-	hed := http.Header{}
-	req := http.Request{Header: hed}
-	ctx := gin.Context{Request: &req}
+	ctx, req := createTestContext()
 
 	type args struct {
 		c   *gin.Context
@@ -213,7 +212,7 @@ func Test_tokenFromCookie(t *testing.T) {
 		{
 			name: "valid token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "jwt",
 				tok: "good_token",
 			},
@@ -223,7 +222,7 @@ func Test_tokenFromCookie(t *testing.T) {
 		{
 			name: "invalid key",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "bad_jwt",
 				tok: "",
 			},
@@ -252,9 +251,7 @@ func Test_tokenFromCookie(t *testing.T) {
 }
 
 func Test_tokenFromParam(t *testing.T) {
-	hed := http.Header{}
-	req := http.Request{Header: hed}
-	ctx := gin.Context{Request: &req}
+	ctx, _ := createTestContext()
 
 	type args struct {
 		c   *gin.Context
@@ -270,7 +267,7 @@ func Test_tokenFromParam(t *testing.T) {
 		{
 			name: "valid token",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "token",
 				tok: "good_token",
 			},
@@ -280,7 +277,7 @@ func Test_tokenFromParam(t *testing.T) {
 		{
 			name: "invalid key",
 			args: args{
-				c:   &ctx,
+				c:   ctx,
 				key: "bad_token",
 				tok: "",
 			},
@@ -310,10 +307,7 @@ func Test_tokenFromParam(t *testing.T) {
 
 func TestParseAPIKey(t *testing.T) {
 	t.Run("api key from cookie", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{}
 		cookie := &http.Cookie{
 			Name:   "api_key",
@@ -332,10 +326,7 @@ func TestParseAPIKey(t *testing.T) {
 	})
 
 	t.Run("api key from header", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{}
 		req.Header.Set(APIKeyHeader, "token")
 		gotApiKey, err := ParseAPIKey(ctx, svc)
@@ -349,10 +340,7 @@ func TestParseAPIKey(t *testing.T) {
 	})
 
 	t.Run("api key from query", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{}
 		req.URL.RawQuery = "api_key=token"
 		gotApiKey, err := ParseAPIKey(ctx, svc)
@@ -366,10 +354,7 @@ func TestParseAPIKey(t *testing.T) {
 	})
 
 	t.Run("api key from param", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, _ := createTestContext()
 		svc := &cfg.Server{}
 		ctx.Params = []gin.Param{
 			{
@@ -393,10 +378,7 @@ func TestParseToken(t *testing.T) {
 		return &jwt.Token{Raw: "token"}, nil
 	}
 	t.Run("jwt token from cookie", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{
 			JWT: cfg.JWT{
 				Algorithm: "HS512",
@@ -419,10 +401,7 @@ func TestParseToken(t *testing.T) {
 		}
 	})
 	t.Run("token from query", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{
 			JWT: cfg.JWT{
 				Algorithm: "HS512",
@@ -440,10 +419,7 @@ func TestParseToken(t *testing.T) {
 		}
 	})
 	t.Run("token from header", func(t *testing.T) {
-		hed := http.Header{}
-		url := &url.URL{}
-		req := http.Request{Header: hed, URL: url}
-		ctx := &gin.Context{Request: &req}
+		ctx, req := createTestContext()
 		svc := &cfg.Server{
 			JWT: cfg.JWT{
 				Algorithm: "HS512",
@@ -467,10 +443,7 @@ func Test_addToContext(t *testing.T) {
 		key   string
 		value string
 	}
-	hed := http.Header{}
-	url := &url.URL{}
-	req := &http.Request{Header: hed, URL: url}
-	ctx := &gin.Context{Request: req}
+	ctx, _ := createTestContext()
 	type args struct {
 		c     *gin.Context
 		key   consts.ContextKey
@@ -511,10 +484,7 @@ func Test_addToContext(t *testing.T) {
 }
 
 func Test_addUserIdToContext(t *testing.T) {
-	hed := http.Header{}
-	url := &url.URL{}
-	req := &http.Request{Header: hed, URL: url}
-	ctx := &gin.Context{Request: req}
+	ctx, _ := createTestContext()
 
 	uid, _ := uuid.NewV4()
 	type args struct {
