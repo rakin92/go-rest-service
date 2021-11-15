@@ -69,6 +69,7 @@ func main() {
 		logger.Panic(&err, "[ORM]: Failed to connect to database: %s", err.Error())
 	}
 
+	// Initialize our redis cache
 	c, err := cache.Init(&conf.Cache)
 	if err != nil {
 		logger.Panic(&err, "[ORM]: Failed to connect to cache: %s", err.Error())
