@@ -76,22 +76,22 @@ func MissingArg(argumentName string) error {
 }
 
 // Debug logs a new message with debug level.
-func Debug(message string, args ...interface{}) {
+func Debug(message string, args ...any) {
 	logger.Debug().Msgf(message, args...)
 }
 
 // Info logs a new message with info level.
-func Info(message string, args ...interface{}) {
+func Info(message string, args ...any) {
 	logger.Info().Msgf(message, args...)
 }
 
 // Warn logs a new message with warn level.
-func Warn(message string, args ...interface{}) {
+func Warn(message string, args ...any) {
 	logger.Warn().Msgf(message, args...)
 }
 
 // Error logs a new message with error level.
-func Error(err *error, message string, args ...interface{}) {
+func Error(err *error, message string, args ...any) {
 	if err != nil {
 		logger.Error().Err(*err).Msgf(message, args...)
 	} else {
@@ -101,7 +101,7 @@ func Error(err *error, message string, args ...interface{}) {
 
 // Fatal logs a new message with fatal level. The os.Exit(1) function
 // is called which terminates the program immediately.
-func Fatal(err *error, message string, args ...interface{}) {
+func Fatal(err *error, message string, args ...any) {
 	if err != nil {
 		logger.Fatal().Err(*err).Msgf(message, args...)
 	} else {
@@ -111,7 +111,7 @@ func Fatal(err *error, message string, args ...interface{}) {
 
 // Panic logs a new message with panic level. The panic() function
 // is called by the Msg method, which stops the ordinary flow of a goroutine.
-func Panic(err *error, message string, args ...interface{}) {
+func Panic(err *error, message string, args ...any) {
 	if err != nil {
 		logger.Panic().Err(*err).Msgf(message, args...)
 	} else {

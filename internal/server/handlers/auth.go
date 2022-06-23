@@ -86,7 +86,7 @@ func Logout() gin.HandlerFunc {
 }
 
 // addProviderToContext adds our auth providers to context
-func addProviderToContext(c *gin.Context, value interface{}) *http.Request {
+func addProviderToContext(c *gin.Context, value any) *http.Request {
 	return c.Request.WithContext(context.WithValue(c.Request.Context(),
-		string(consts.ProjectContextKeys.GothicProviderCtxKey), value))
+		consts.ProjectContextKeys.GothicProviderCtxKey, value))
 }

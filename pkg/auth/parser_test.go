@@ -374,7 +374,7 @@ func TestParseAPIKey(t *testing.T) {
 }
 
 func TestParseToken(t *testing.T) {
-	jwtParse = func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+	jwtParse = func(token string, kf jwt.Keyfunc, opts ...jwt.ParserOption) (*jwt.Token, error) {
 		return &jwt.Token{Raw: "token"}, nil
 	}
 	t.Run("jwt token from cookie", func(t *testing.T) {
@@ -447,7 +447,7 @@ func Test_addToContext(t *testing.T) {
 	type args struct {
 		c     *gin.Context
 		key   consts.ContextKey
-		value interface{}
+		value any
 	}
 
 	tObj := testObj{

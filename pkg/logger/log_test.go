@@ -24,7 +24,7 @@ func TestPanic(t *testing.T) {
 	type args struct {
 		err     *error
 		message string
-		args    []interface{}
+		args    []any
 	}
 	tests := []struct {
 		name string
@@ -64,7 +64,7 @@ func TestFatal(t *testing.T) {
 	type args struct {
 		err     *error
 		message string
-		args    []interface{}
+		args    []any
 	}
 	tests := []struct {
 		name string
@@ -110,7 +110,7 @@ func TestError(t *testing.T) {
 	type args struct {
 		err     *error
 		message string
-		args    []interface{}
+		args    []any
 	}
 	tests := []struct {
 		name string

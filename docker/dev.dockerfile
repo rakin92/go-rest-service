@@ -1,5 +1,5 @@
 # Simple standard golang service
-FROM golang:1.17.1-alpine
+FROM golang:1.18.3-alpine
 
 RUN apk update && apk upgrade && apk add --no-cache bash git openssh curl
 

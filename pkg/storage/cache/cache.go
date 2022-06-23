@@ -23,7 +23,7 @@ func Init(c *cfg.Cache) (*Cache, error) {
 		Addr:     c.Server,
 		Password: c.Password,
 	})
-	timout, err := time.ParseDuration(c.Timeout)
+	t, err := time.ParseDuration(c.Timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func Init(c *cfg.Cache) (*Cache, error) {
 	}
 	logger.Info("[Cache.Init] Connected to cache")
 
-	return &Cache{client: client, ttl: timout}, nil
+	return &Cache{client: client, ttl: t}, nil
 }
 
 // Add inserts items to cache

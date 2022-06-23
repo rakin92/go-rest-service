@@ -1,5 +1,5 @@
 # Multistaged build production golang service
-FROM golang:1.17.1-alpine as base
+FROM golang:1.18.3-alpine as base
 
 FROM base AS ci
 

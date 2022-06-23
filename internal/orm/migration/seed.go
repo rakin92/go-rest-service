@@ -76,18 +76,18 @@ var SeedRBAC *gormigrate.Migration = &gormigrate.Migration{
 		tx := db.Begin()
 		defer rollback(tx)
 		v := reflect.ValueOf(consts.EntityNames)
-		tablenames := make([]interface{}, v.NumField())
+		tableNames := make([]any, v.NumField())
 		for i := 0; i < v.NumField(); i++ {
-			tablenames[i] = consts.GetTableName(v.Field(i).Interface().(string))
+			tableNames[i] = consts.GetTableName(v.Field(i).Interface().(string))
 		}
 		v = reflect.ValueOf(consts.Permissions)
-		permissions := make([]interface{}, v.NumField())
+		permissions := make([]any, v.NumField())
 		for i := 0; i < v.NumField(); i++ {
 			permissions[i] = v.Field(i).Interface()
 		}
 		padmin := []models.Permission{}
 		puser := []models.Permission{}
-		for _, t := range tablenames {
+		for _, t := range tableNames {
 			for _, p := range permissions {
 				permission := models.Permission{
 					Tag:         consts.FormatPermissionTag(p.(string), t.(string)),

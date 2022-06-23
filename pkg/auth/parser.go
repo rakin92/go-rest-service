@@ -152,7 +152,7 @@ func ParseToken(c *gin.Context, sc *cfg.Server) (t *jwt.Token, err error) {
 	}
 	SigningAlgorithm := sc.JWT.Algorithm
 	Key := []byte(sc.JWT.Secret)
-	return jwtParse(token, func(t *jwt.Token) (interface{}, error) {
+	return jwtParse(token, func(t *jwt.Token) (any, error) {
 		if jwtGetSigningMethod(SigningAlgorithm) != t.Method {
 			return nil, ErrInvalidSigningAlgorithm
 		}
@@ -190,7 +190,7 @@ func ParseAPIKey(c *gin.Context, sc *cfg.Server) (apiKey string, err error) {
 }
 
 // addUserIdToContext adds a given context key and its value to our gin context
-func addToContext(c *gin.Context, key consts.ContextKey, value interface{}) *http.Request {
+func addToContext(c *gin.Context, key consts.ContextKey, value any) *http.Request {
 	c.Set(string(key), value)
 	return c.Request.WithContext(context.WithValue(c.Request.Context(), key, value))
 }
