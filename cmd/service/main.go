@@ -2,6 +2,9 @@
 package main
 
 import (
+	"log"
+
+	"github.com/getsentry/sentry-go"
 	"github.com/rakin92/go-rest-service/internal/orm"
 	"github.com/rakin92/go-rest-service/internal/server"
 	"github.com/rakin92/go-rest-service/pkg/cfg"
@@ -61,6 +64,25 @@ func main() {
 				Secret:    env.MustGet("PROVIDER_TWITTER_SECRET"),
 			},
 		},
+		Sentry: cfg.Sentry{
+			Enabled:          env.MustGetBool("SENTRY_ENABLED"),
+			Debug:            env.MustGetBool("SENTRY_DEBUG"),
+			DSN:              env.MustGet("SENTRY_DSN"),
+			TracesSampleRate: env.MustGetFloat64("SENTRY_TRACES_SAMPLE_RATE"),
+		},
+	}
+
+	if conf.Sentry.Enabled {
+		err := sentry.Init(sentry.ClientOptions{
+			Environment:      conf.Env,
+			Release:          conf.Version,
+			Dsn:              conf.Sentry.DSN,
+			Debug:            conf.Sentry.Debug,
+			TracesSampleRate: conf.Sentry.TracesSampleRate,
+		})
+		if err != nil {
+			log.Fatalf("sentry.Init: %s", err)
+		}
 	}
 
 	// Initialize our database orm

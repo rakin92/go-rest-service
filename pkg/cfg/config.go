@@ -15,6 +15,7 @@ type Server struct {
 	Cache          Cache
 	Database       DB
 	MDB            MongoDB
+	Sentry         Sentry
 	AuthProviders  []AuthProvider
 }
 
@@ -47,6 +48,14 @@ type MongoDB struct {
 	Dialect  string
 	Host     string
 	Database string
+}
+
+// Sentry defines the configuration for the Sentry monitoring
+type Sentry struct {
+	Enabled          bool
+	Debug            bool
+	DSN              string
+	TracesSampleRate float64
 }
 
 // AuthProvider defines the configuration for the Goth config

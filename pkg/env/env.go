@@ -62,3 +62,18 @@ func MustGetInt64(k string) int64 {
 	}
 	return i
 }
+
+// MustGetFloat64 will return the env as float64 or panic if it is not present
+func MustGetFloat64(k string) float64 {
+	v := os.Getenv(k)
+	if v == "" {
+		logger.MissingArg(k)
+		logger.Panic(nil, "ENV missing, key: %s", k)
+	}
+	i, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		logger.MissingArg(k)
+		logger.Panic(&err, "ENV err: [%s]"+err.Error())
+	}
+	return i
+}

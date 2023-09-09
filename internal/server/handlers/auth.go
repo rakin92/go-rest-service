@@ -22,6 +22,7 @@ func AuthProviders() gin.HandlerFunc {
 		c.Request = addProviderToContext(c, c.Param(string(consts.ProjectContextKeys.ProviderCtxKey)))
 		// try to get the user without re-authenticating
 		if gothUser, err := gothic.CompleteUserAuth(c.Writer, c.Request); err != nil {
+			logger.Error(&err, "error auth")
 			gothic.BeginAuthHandler(c.Writer, c.Request)
 		} else {
 			logger.Debug("user: %#v", gothUser)
